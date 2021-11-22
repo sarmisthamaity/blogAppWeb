@@ -3,11 +3,13 @@ const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const salt = parseInt(process.env.SALT)
 const token = require('../middleware/createToken');
-
+const sendMailer = require('../common/mailverification');
+const code = require('../common/generatecode');
 
 const signUp = async(req, res) => {
     const dataValidation = Joi.object({
         name: Joi.string().required(),
+        gmail: Joi.string().email().required(),
         password: Joi.string().alphanum().required(),
         gender: Joi.string().required(),
         profilepic: Joi.string().required().optional(null),
@@ -23,11 +25,11 @@ const signUp = async(req, res) => {
         validation = validation.value;
     };
     try{
-        const searchUser = await userModel.findOne({name: validation.name});
+        const searchUser = await userModel.findOne({gmail: validation.gmail});
         if(searchUser){
             return res.status(422).send({
                 status: 422,
-                message: 'username not available create different username'
+                message: 'user mail not available use different gmail'
             });
         } else {
 
@@ -35,16 +37,25 @@ const signUp = async(req, res) => {
         const hashPassword = await bcrypt.hash(validation.password, salt);
         const data = {
             name: validation.name,
+            gmail: validation.gmail,
             password: hashPassword,
             gender: validation.gender,
             profilepic: req.file.filename,
             location: validation.location
         };
         const createUser = await userModel.create(data);
+        const maildata = {
+            from: 'sarmistha20@navgurukul.org',
+            to: validation.gmail,
+            subject: 'verification code',
+            text: code.generateRandomCode()
+        };
+        const receiveMail = await sendMailer.mailSender(maildata);
         return res.status(202).send({
             status: 202,
-            message: 'user created',
-            createUser
+            message: 'user created or verify code send to your gmail',
+            createUser,
+            
         });
     }catch(err){
         return res.status(500).send({
@@ -58,6 +69,7 @@ const signUp = async(req, res) => {
 const Login = async(req, res) => {
     const dataValidation = Joi.object({
         name: Joi.string().required(),
+        gmail: Joi.string().email().required(),
         password: Joi.string().alphanum().required(),
     });
     let loginValidation = dataValidation.validate(req.body);
@@ -71,10 +83,11 @@ const Login = async(req, res) => {
     };
     const payload = {
         name: loginValidation.name,
+        gmail: loginValidation.gmail,
         password: loginValidation.password,
     };
     try{
-        const searchUser = await userModel.findOne({name: loginValidation.name});
+        const searchUser = await userModel.findOne({gmail: loginValidation.gmail});
         payload.userId = searchUser._id;
         const Token = await token.createToken(payload);
         const checkPassword = await bcrypt.compare(loginValidation.password, searchUser.password);
