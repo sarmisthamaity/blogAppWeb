@@ -11,7 +11,7 @@ const signUp = async(req, res) => {
         password: Joi.string().alphanum().required(),
         gender: Joi.string().required(),
         profilepic: Joi.string().required().optional(null),
-        location: Joi.string().required().optional(null)
+        location: Joi.string().optional(null).default(null)
     });
     let validation = dataValidation.validate(req.body);
     if(validation.error){
@@ -40,11 +40,11 @@ const signUp = async(req, res) => {
             profilepic: req.file.filename,
             location: validation.location
         };
-        const craeteUser = await userModel.create(data);
+        const createUser = await userModel.create(data);
         return res.status(202).send({
             status: 202,
             message: 'user created',
-            craeteUser
+            createUser
         });
     }catch(err){
         return res.status(500).send({

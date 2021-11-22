@@ -15,9 +15,11 @@ const fileUpload = multer({
     fileFilter: (req, file, callback) => {
         if(file.mimetype == 'image/jpg' || file.mimetype == 'image/png' || file.mimetype == 'image/jpeg'){
             callback(null, true);
+            console.log("hello");
         } else{
             callback(null, false)
-            return callback(new Error ('only .jpg or .png or .jpeg file is accepted'))
+            console.log("hiiiii");
+            return callback(new Error ('only .jpg or .png or .jpeg file is accepted'));
         }   
     },
      limits: {
