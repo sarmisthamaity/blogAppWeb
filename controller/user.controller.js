@@ -74,8 +74,9 @@ const Login = async(req, res) => {
         password: loginValidation.password,
     };
     try{
-        const Token = await token.createToken(payload);
         const searchUser = await userModel.findOne({name: loginValidation.name});
+        payload.userId = searchUser._id;
+        const Token = await token.createToken(payload);
         const checkPassword = await bcrypt.compare(loginValidation.password, searchUser.password);
         if(checkPassword){
             return res.status(202).send({
