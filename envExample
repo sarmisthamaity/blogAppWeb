@@ -1,0 +1,5 @@
+URL = 'mongodb+srv://sarmistha:gouri1434@cluster0.ecipz.mongodb.net/webBlogApp?retryWrites=true&w=majority
+PORT = 3456
+SALT = 13
+SERECTKEY = asdfghjklertyuiosdfghjkertyuiozxcvbntrewsdfvbn
+PASSWORD = infi@111

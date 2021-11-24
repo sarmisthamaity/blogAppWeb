@@ -13,12 +13,11 @@ const maxSize = 5 * 1024 *1024            // approxmately 5MB
 const fileUpload = multer({
     storage: fileStorage,
     fileFilter: (req, file, callback) => {
+        console.log("uploading file........");
         if(file.mimetype == 'image/jpg' || file.mimetype == 'image/png' || file.mimetype == 'image/jpeg'){
             callback(null, true);
-            console.log("hello");
         } else{
             callback(null, false)
-            console.log("hiiiii");
             return callback(new Error ('only .jpg or .png or .jpeg file is accepted'));
         }   
     },

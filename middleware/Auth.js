@@ -5,21 +5,23 @@ module.exports = (req, res, next) => {
     let token = '';
     try {
         if (!req.headers.authorization) {
-            decoded = {
-                status: 300,
-                message: 'jwt must be provided'
-            }
-            next(decoded);
+            return res.status(401).send({
+                status: 401,
+                message: 'token not found or first do signup/login'
+            });
         } else if (req.headers.authorization.startsWith('Bearer')) {
             token = req.headers.authorization.split(' ')[1];
         } else {
             token = req.headers.authorization;
         }
         decoded = Jwt.verify(token, process.env.SERECTKEY);
+        req.decoded = decoded;
         next(decoded);
     }
     catch (err) {
-        decoded = err;
-        next(decoded)
+        return res.status(500).send({
+            status: 500,
+            message: 'Unauthorized'
+        });
     };
 };

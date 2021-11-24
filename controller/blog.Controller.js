@@ -5,7 +5,7 @@ const checkwords = require('../common/checkwords');
 
 const createBlog = async (decoded, req, res, next) => {
     const contentValidation = Joi.object({
-        blogContent: Joi.string().required().optional(null),
+        blog: Joi.string().required().optional(null),
         picture: Joi.string().required().optional(null)
     });
 
@@ -19,13 +19,13 @@ const createBlog = async (decoded, req, res, next) => {
         validationOfContent = validationOfContent.value;
     };
     try {
-        const userName = await userModel.findOne({ name: decoded.name });
+        const userName = await userModel.findOne({ gmail: decoded.gmail });
         const lenthOfContent = await checkwords.checkWords(validationOfContent.blogContent);
         if (lenthOfContent > 200) {
             res.send('content should have less than 200 words')
         };
         const blogData = {
-            blogs: validationOfContent.blogContent,
+            blog: validationOfContent.blog,
             picture: req.file.filename,
             userId: userName._id
         };
@@ -45,9 +45,10 @@ const createBlog = async (decoded, req, res, next) => {
 
 
 const editBlog = async (decoded, req, res, next) => {
-    console.log(decoded);
+    console.log(decoded, 'yyyy');
+    console.log("DECODED: " + JSON.stringify(req.decoded));
     const content = Joi.object({
-        blogs: Joi.string().required().optional(null)
+        blog: Joi.string().required().optional(null)
     });
     let contentValidation = content.validate(req.body);
     if (contentValidation.error) {
@@ -56,6 +57,8 @@ const editBlog = async (decoded, req, res, next) => {
         contentValidation = contentValidation.value;
     };
     try {
+        const d = await blogModel.findOne({userId: decoded.userId}).populate('userId');
+        console.log(d, 'iiii');
         blogModel.findOneAndUpdate({ userId: decoded.userId}, contentValidation,
             { new: true }
         ).populate({path: 'userId'})

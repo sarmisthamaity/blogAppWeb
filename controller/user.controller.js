@@ -5,7 +5,7 @@ const salt = parseInt(process.env.SALT)
 const token = require('../middleware/createToken');
 const sendMailer = require('../common/mailverification');
 const code = require('../common/generatecode');
-
+   
 const signUp = async(req, res) => {
     const dataValidation = Joi.object({
         name: Joi.string().required(),
@@ -29,7 +29,7 @@ const signUp = async(req, res) => {
         if(searchUser){
             return res.status(422).send({
                 status: 422,
-                message: 'user mail not available use different gmail'
+                message: 'gmail already exists'
             });
         } else {
 
@@ -43,21 +43,26 @@ const signUp = async(req, res) => {
             profilepic: req.file.filename,
             location: validation.location
         };
+        const verifyCode = await code.generateRandomCode();
+
         const createUser = await userModel.create(data);
-        const maildata = {
-            from: 'sarmistha20@navgurukul.org',
-            to: validation.gmail,
-            subject: 'verification code',
-            text: code.generateRandomCode()
+        const subject = `verification code is ${verifyCode}`;
+        const receiveMail = await sendMailer.mailSender(validation.gmail, subject, '');
+
+        const datas = {
+            name: createUser.name,
+            gmail: createUser.gmail,
+            gender: createUser.gender,
+            profilepic: createUser.profilepic,
+            location: createUser.location
         };
-        const receiveMail = await sendMailer.mailSender(maildata);
         return res.status(202).send({
             status: 202,
             message: 'user created or verify code send to your gmail',
-            createUser,
-            
+            datas
         });
     }catch(err){
+        console.log(err);
         return res.status(500).send({
             error: err,
             status: 500
@@ -88,17 +93,25 @@ const Login = async(req, res) => {
     };
     try{
         const searchUser = await userModel.findOne({gmail: loginValidation.gmail});
+        console.log(searchUser, 'ooooo');
         payload.userId = searchUser._id;
         const Token = await token.createToken(payload);
         const checkPassword = await bcrypt.compare(loginValidation.password, searchUser.password);
+        const datas = {
+            name: searchUser.name,
+            gmail: searchUser.gmail,
+            gender: searchUser.gender,
+            profilepic: searchUser.profilepic,
+            location: searchUser.location
+        };
         if(checkPassword){
             return res.status(202).send({
                 status: 202,
                 message: 'logged in succesfully',
                 Token,
-                searchUser
+                datas
             });
-        }
+        };
     }catch(err){
         console.log(err);
         return res.status(500).send({
@@ -109,7 +122,27 @@ const Login = async(req, res) => {
 };
 
 
+const specificUser = async(decoded, req, res, next) => {
+    const {gmail} = req.body;
+    try{
+        const findUser = await userModel.findOne({gmail: gmail});
+        return res.status(202).send({
+            status: 202,
+            message: findUser
+        });
+    } catch(err) {
+        console.log(err);
+        return res.status(500).send({
+            status: 500,
+            error: err
+        });
+    };
+};
+
+
+
 module.exports = {
     signUp,
-    Login
+    Login,
+    specificUser
 };

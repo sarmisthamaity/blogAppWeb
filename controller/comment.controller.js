@@ -4,12 +4,7 @@ const blogModel = require('../models/blog.model');
 const checkwords = require('../common/checkwords');
 
 const createComment = async (decoded, req, res, next) => {
-    if (decoded.message == 'jwt must be provided') {
-        return res.status(400).send({
-            status: 400,
-            message: 'you have to signup first'
-        });
-    };
+    const Blog = await blogModel.findOne({userId: decoded.userId}).populate({path: 'userId'});
     const commentvalidate = Joi.object({
         comment: Joi.string().optional(null),
         like: Joi.number().optional(null),
@@ -29,12 +24,20 @@ const createComment = async (decoded, req, res, next) => {
         if(commentLength > 100){
             return res.send('comment should be less than 100 words')
         };
-        const comments = await commentModel.create(commentValidation);
+        const commentPayload = {
+            comment: commentValidation.comment,
+            like: commentValidation.like,
+            dislike: commentValidation.dislike,
+            blogId: Blog._id,
+            userId: Blog.userId._id
+        };
+        const comments = await commentModel.create(commentPayload);
         return res.status(202).send({
             status: 202,
             comments
         });
     } catch (err) {
+        console.log(err);
         return res.status(500).send({
             status: 500,
             errormessage: err
@@ -58,10 +61,6 @@ const anyUser = async (req, res) => {
         });
     };
 };
-
-
-
-
 
 
 module.exports = {
