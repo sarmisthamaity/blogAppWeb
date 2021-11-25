@@ -3,8 +3,12 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     name: {
         type: String
-    }, gmail: {
-        type: String
+    }, email: {
+        type: String,
+        index: true,
+        unique: true,
+        dropDups: true,
+        sparse: true
     }, password: {
         type: String
     }, gender: {
@@ -17,6 +21,7 @@ const userSchema = new mongoose.Schema({
         default: ''
     }
 });
+
 
 const userModel = new mongoose.model('users', userSchema);
 

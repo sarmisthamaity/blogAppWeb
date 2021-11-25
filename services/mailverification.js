@@ -19,7 +19,7 @@ const mailSender = (to, subject, text) => {
     return new Promise((resolve, reject) =>{
         const transporter = nodeMailer.createTransport({
             service: 'gmail',
-            // host: 'smtp.gmail.com',
+            host: 'smtp.gmail.com',
             port: 465,
             secure: false,
             requireTLS: true,

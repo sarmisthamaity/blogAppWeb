@@ -2,109 +2,108 @@ const userModel = require('../models/user.model');
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const salt = parseInt(process.env.SALT)
-const token = require('../middleware/createToken');
-const sendMailer = require('../common/mailverification');
-const code = require('../common/generatecode');
-   
-const signUp = async(req, res) => {
-    const dataValidation = Joi.object({
-        name: Joi.string().required(),
-        gmail: Joi.string().email().required(),
-        password: Joi.string().alphanum().required(),
-        gender: Joi.string().required(),
-        profilepic: Joi.string().required().optional(null),
-        location: Joi.string().optional(null).default(null)
-    });
-    let validation = dataValidation.validate(req.body);
-    if(validation.error){
+const token = require('../services/createtoken');
+const sendMailer = require('../services/mailverification');
+const code = require('../services/generatecode');
+const validation = require('../services/datavalidation');
+
+
+const signUp = async (req, res) => {
+    const { name, email, password, gender, location } = req.body;
+    const userData = {
+        name: name,
+        email: email,
+        password: password,
+        profilepic: req.file.filename,
+        gender: gender,
+        location: location
+    };
+
+
+    let dataValidation = validation.validate(userData);
+    if (dataValidation.error) {
         return res.status(300).send({
-            error: validation.error,
+            error: dataValidation.error.details[0].message,
             status: 300
         });
-    } else{
-        validation = validation.value;
+    } else {
+        dataValidation = dataValidation.value;
     };
-    try{
-        const searchUser = await userModel.findOne({gmail: validation.gmail});
-        if(searchUser){
-            return res.status(422).send({
-                status: 422,
-                message: 'gmail already exists'
-            });
-        } else {
-
-        };
-        const hashPassword = await bcrypt.hash(validation.password, salt);
+    try {
+        const hashPassword = await bcrypt.hash(dataValidation.password, salt);
         const data = {
-            name: validation.name,
-            gmail: validation.gmail,
+            name: dataValidation.name,
+            email: dataValidation.email,
             password: hashPassword,
-            gender: validation.gender,
-            profilepic: req.file.filename,
-            location: validation.location
+            gender: dataValidation.gender,
+            profilepic: dataValidation.profilepic,
+            location: dataValidation.location
         };
         const verifyCode = await code.generateRandomCode();
 
         const createUser = await userModel.create(data);
-        const subject = `verification code is ${verifyCode}`;
-        const receiveMail = await sendMailer.mailSender(validation.gmail, subject, '');
 
+        const subject = `verification code is ${verifyCode}`;
+        const receiveMail = await sendMailer.mailSender(dataValidation.email, subject, '');
         const datas = {
             name: createUser.name,
-            gmail: createUser.gmail,
+            email: createUser.email,
             gender: createUser.gender,
             profilepic: createUser.profilepic,
             location: createUser.location
         };
-        return res.status(202).send({
-            status: 202,
+        return res.status(201).send({
+            status: 201,
             message: 'user created or verify code send to your gmail',
+            mailResponse: receiveMail.response,
             datas
         });
-    }catch(err){
+    } catch (err) {
         console.log(err);
-        return res.status(500).send({
-            error: err,
-            status: 500
+        return res.status(406).send({
+            error: 'duplicate key error in collection',
+            status: 406
         });
     };
 };
 
 
-const Login = async(req, res) => {
-    const dataValidation = Joi.object({
-        name: Joi.string().required(),
-        gmail: Joi.string().email().required(),
-        password: Joi.string().alphanum().required(),
-    });
-    let loginValidation = dataValidation.validate(req.body);
-    if(loginValidation.error){
-        return res.status(300).send({
-            status: 300,
-            error: loginValidation.error
+const Login = async (req, res) => {
+    const { name, password, email, gender } = req.body;
+    const loginData = {
+        name: name,
+        password: password,
+        email: email,
+        gender: gender
+    };
+    let loginValidation = validation.validate(loginData);
+    if (loginValidation.error) {
+        return res.status(406).send({
+            status: 406,
+            error: loginValidation.error.details[0].message
         });
-    } else{
+    } else {
         loginValidation = loginValidation.value;
     };
     const payload = {
         name: loginValidation.name,
-        gmail: loginValidation.gmail,
+        email: loginValidation.email,
         password: loginValidation.password,
+        gender: loginValidation.gender
     };
-    try{
-        const searchUser = await userModel.findOne({gmail: loginValidation.gmail});
-        console.log(searchUser, 'ooooo');
+    try {
+        const searchUser = await userModel.findOne({ gmail: loginValidation.gmail });
         payload.userId = searchUser._id;
         const Token = await token.createToken(payload);
         const checkPassword = await bcrypt.compare(loginValidation.password, searchUser.password);
         const datas = {
             name: searchUser.name,
-            gmail: searchUser.gmail,
+            gmail: searchUser.email,
             gender: searchUser.gender,
             profilepic: searchUser.profilepic,
             location: searchUser.location
         };
-        if(checkPassword){
+        if (checkPassword) {
             return res.status(202).send({
                 status: 202,
                 message: 'logged in succesfully',
@@ -112,28 +111,28 @@ const Login = async(req, res) => {
                 datas
             });
         };
-    }catch(err){
+    } catch (err) {
         console.log(err);
-        return res.status(500).send({
+        return res.status(400).send({
             error: err,
-            status: 500
+            status: 400
         });
     };
 };
 
 
-const specificUser = async(decoded, req, res, next) => {
-    const {gmail} = req.body;
-    try{
-        const findUser = await userModel.findOne({gmail: gmail});
+const specificUser = async (decoded, req, res, next) => {
+    const { gmail } = req.body;
+    try {
+        const findUser = await userModel.findOne({ gmail: gmail });
         return res.status(202).send({
             status: 202,
             message: findUser
         });
-    } catch(err) {
+    } catch (err) {
         console.log(err);
-        return res.status(500).send({
-            status: 500,
+        return res.status(400).send({
+            status: 400,
             error: err
         });
     };

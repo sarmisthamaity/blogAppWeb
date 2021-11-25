@@ -1,19 +1,21 @@
 const commentModel = require('../models/comment.model');
 const Joi = require('joi');
 const blogModel = require('../models/blog.model');
-const checkwords = require('../common/checkwords');
+const checkwords = require('../services/checkwords');
+const comvalidation = require('../services/datavalidation')
 
 const createComment = async (decoded, req, res, next) => {
-    const Blog = await blogModel.findOne({userId: decoded.userId}).populate({path: 'userId'});
-    const commentvalidate = Joi.object({
-        comment: Joi.string().optional(null),
-        like: Joi.number().optional(null),
-        dislike: Joi.number().optional()
-    });
-    let commentValidation = commentvalidate.validate(req.body);
+    const Blog = await blogModel.findOne({ userId: decoded.userId }).populate({ path: 'userId' });
+    const { comment, like, dislike } = req.body;
+    const data = {
+        comment: comment,
+        like: like,
+        dislike: dislike
+    };
+    let commentValidation = comvalidation.validate(data);
     if (commentValidation.error) {
-        return res.status(300).send({
-            status: 300,
+        return res.status(400).send({
+            status: 400,
             message: commentValidation.error
         });
     } else {
@@ -21,7 +23,7 @@ const createComment = async (decoded, req, res, next) => {
     };
     try {
         let commentLength = await checkwords.checkWords(commentValidation.comment);
-        if(commentLength > 100){
+        if (commentLength > 100) {
             return res.send('comment should be less than 100 words')
         };
         const commentPayload = {

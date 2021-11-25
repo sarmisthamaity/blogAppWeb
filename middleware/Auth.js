@@ -19,8 +19,8 @@ module.exports = (req, res, next) => {
         next(decoded);
     }
     catch (err) {
-        return res.status(500).send({
-            status: 500,
+        return res.status(401).send({
+            status: 401,
             message: 'Unauthorized'
         });
     };

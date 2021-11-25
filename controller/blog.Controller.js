@@ -1,18 +1,19 @@
 const Joi = require('joi');
 const blogModel = require('../models/blog.model');
 const userModel = require('../models/user.model');
-const checkwords = require('../common/checkwords');
+const checkwords = require('../services/checkwords');
+const comvalidation = require('../services/datavalidation');
 
 const createBlog = async (decoded, req, res, next) => {
-    const contentValidation = Joi.object({
-        blog: Joi.string().required().optional(null),
-        picture: Joi.string().required().optional(null)
-    });
-
-    let validationOfContent = contentValidation.validate(req.body);
+    const { blog, picture } = req.body;
+    const blogD = {
+        blog: blog,
+        picture: picture
+    };
+    let validationOfContent = comvalidation.validate(blogD);
     if (validationOfContent.error) {
-        return res.status(300).send({
-            status: 300,
+        return res.status(400).send({
+            status: 400,
             error: validationOfContent.error
         });
     } else {
@@ -30,14 +31,14 @@ const createBlog = async (decoded, req, res, next) => {
             userId: userName._id
         };
         const createblog = await blogModel.create(blogData);
-        return res.status(202).send({
-            status: 202,
+        return res.status(201).send({
+            status: 201,
             createblog
         });
     } catch (err) {
         console.log(err);
-        return res.status(500).send({
-            status: 500,
+        return res.status(404).send({
+            status: 404,
             error: err
         });
     };
@@ -45,28 +46,30 @@ const createBlog = async (decoded, req, res, next) => {
 
 
 const editBlog = async (decoded, req, res, next) => {
-    console.log(decoded, 'yyyy');
     console.log("DECODED: " + JSON.stringify(req.decoded));
-    const content = Joi.object({
-        blog: Joi.string().required().optional(null)
-    });
-    let contentValidation = content.validate(req.body);
+    const blogC = req.body.blog;
+    let contentValidation = comvalidation.validate(blogC);
     if (contentValidation.error) {
-        return res.send(contentValidation.error);
+        return res.status(400)
+            .send(contentValidation.error);
     } else {
         contentValidation = contentValidation.value;
     };
     try {
-        const d = await blogModel.findOne({userId: decoded.userId}).populate('userId');
-        console.log(d, 'iiii');
-        blogModel.findOneAndUpdate({ userId: decoded.userId}, contentValidation,
+        blogModel.findOneAndUpdate({ userId: decoded.userId }, contentValidation,
             { new: true }
-        ).populate({path: 'userId'})
+        ).populate({ path: 'userId' })
             .exec((err, updateData) => {
-                if(err){
-                    res.send(err)
-                } else{
-                    res.send(updateData)
+                if (err) {
+                    res.status(304).send({
+                        status: 304,
+                        err
+                    });
+                } else {
+                    res.status(202).send({
+                        status: 202,
+                        updateData
+                    });
                 };
             });
     } catch (err) {
@@ -74,20 +77,27 @@ const editBlog = async (decoded, req, res, next) => {
     };
 };
 
-const removeBlog = async(decoded, req, res, next) => {
-    try{
-        blogModel.deleteOne({userId: decoded.userId})
-        .populate({path: 'userId'})
-        .exec((err, data) => {
-            if(err){
-                res.send(err)
-            } else{
-                res.send(data)
-            };
-        });
-    } catch(err) {
-        return res.status(500).send({
-            status: 500,
+const removeBlog = async (decoded, req, res, next) => {
+    try {
+        blogModel.deleteOne({ userId: decoded.userId })
+            .populate({ path: 'userId' })
+            .exec((err, data) => {
+                if (err) {
+                    res.status(417).send({
+                        status: 417,
+                        err
+                    });
+                } else {
+                    res.status(202).send({
+                        status: 202,
+                        message: 'data deleted',
+                        data
+                    });
+                };
+            });
+    } catch (err) {
+        return res.status(417).send({
+            status: 417,
             messageError: err
         });
     };
