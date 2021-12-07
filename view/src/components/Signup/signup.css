@@ -1,0 +1,34 @@
+.register{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50vh;
+    height: 50vh;
+    border-radius: 20px;
+    box-shadow: 0 0 15px 5px grey;
+    background: white;
+    position: relative;
+}
+.register > input {
+    border-radius: 8px;
+    border: 2px solid;
+    outline: black;
+    color: black;
+    margin: 0.9rem 0;
+    padding: 0.5rem 0 0.75rem;
+    width: 80%;
+    font-size: 1rem;
+}
+
+.register > .button {
+    background: #181818;
+    border: 1px solid #181818;
+    color: #fff;
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    margin: 00.5rem;
+    border-radius: 8px;
+    outline: none;
+    cursor: pointer;
+}

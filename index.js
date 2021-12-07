@@ -1,14 +1,35 @@
 const express = require('express');
 const app = express();
+const cors = require('cors')
+const cookieParser = require('cookie-parser');
+const logger = require('./view/src/logger');
+const morgan = require('morgan');
+
+app.use(cors());
 
 app.use(express.json());
+app.use(cookieParser());
+
 require('dotenv').config();
 require('./connection/connect');
-const routes = require('./routes/index');
 
+morgan.token('body', (req) => JSON.stringify(req.body));
+morgan.token('id', (req) => req.query.Id)
+
+app.use(morgan(':url :id :method :status :body'))
+const routes = require('./routes/index');
 app.use('/', routes);
 
 
+// logger.error("error");
+// logger.warn("warn")
+// logger.info("info");
+// logger.verbose("verbose");
+// logger.debug("debug");
+// logger.silly("silly");
+
+
+
 app.listen(process.env.PORT, () => {
-    console.log(`server is running on port number ${process.env.PORT}`);
+    logger.info(`server is running on port number ${process.env.PORT}`);
 });

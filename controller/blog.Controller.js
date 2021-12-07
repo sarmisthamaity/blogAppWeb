@@ -1,16 +1,16 @@
 const Joi = require('joi');
 const blogModel = require('../models/blog.model');
 const userModel = require('../models/user.model');
-const checkwords = require('../services/checkwords');
-const comvalidation = require('../services/datavalidation');
+const checkWords = require('../services/checkwords');
 
 const createBlog = async (decoded, req, res, next) => {
-    const { blog, picture } = req.body;
-    const blogD = {
-        blog: blog,
-        picture: picture
-    };
-    let validationOfContent = comvalidation.validate(blogD);
+    console.log(decoded, 'oooooo');
+    // console.log(req.file, 'oooo');
+    const validation = Joi.object({
+        blog: Joi.string(),
+        picture: Joi.string()
+    });
+    let validationOfContent = validation.validate(req.body);
     if (validationOfContent.error) {
         return res.status(400).send({
             status: 400,
@@ -20,8 +20,8 @@ const createBlog = async (decoded, req, res, next) => {
         validationOfContent = validationOfContent.value;
     };
     try {
-        const userName = await userModel.findOne({ gmail: decoded.gmail });
-        const lenthOfContent = await checkwords.checkWords(validationOfContent.blogContent);
+        const userName = await userModel.findOne({ email: decoded.email });
+        const lenthOfContent = await checkWords.checkWords(validationOfContent.blogContent);
         if (lenthOfContent > 200) {
             res.send('content should have less than 200 words')
         };
@@ -30,15 +30,15 @@ const createBlog = async (decoded, req, res, next) => {
             picture: req.file.filename,
             userId: userName._id
         };
-        const createblog = await blogModel.create(blogData);
+        const createBlog = await blogModel.create(blogData);
         return res.status(201).send({
             status: 201,
-            createblog
+            createBlog
         });
     } catch (err) {
         console.log(err);
-        return res.status(404).send({
-            status: 404,
+        return res.status(400).send({
+            status: 400,
             error: err
         });
     };
@@ -46,55 +46,46 @@ const createBlog = async (decoded, req, res, next) => {
 
 
 const editBlog = async (decoded, req, res, next) => {
-    console.log("DECODED: " + JSON.stringify(req.decoded));
-    const blogC = req.body.blog;
-    let contentValidation = comvalidation.validate(blogC);
+    const validation = Joi.object({
+        blog: Joi.string(),
+        picture: Joi.string()
+    });
+    let contentValidation = validation.validate(req.body);
     if (contentValidation.error) {
         return res.status(400)
-            .send(contentValidation.error);
+            .send(contentValidation.error.details[0].message);
     } else {
         contentValidation = contentValidation.value;
     };
     try {
-        blogModel.findOneAndUpdate({ userId: decoded.userId }, contentValidation,
-            { new: true }
-        ).populate({ path: 'userId' })
-            .exec((err, updateData) => {
-                if (err) {
-                    res.status(304).send({
-                        status: 304,
-                        err
-                    });
-                } else {
-                    res.status(202).send({
-                        status: 202,
-                        updateData
-                    });
-                };
+        const checkUser = await blogModel.findOne({ userId: decoded.userId });
+        if (checkUser) {
+            const updateData = await blogModel.findByIdAndUpdate({ _id: req.query.Id }, contentValidation, { new: true });
+            return res.status(202).send({
+                status: 202,
+                updateData
             });
+        } else {
+            res.send('you can"t edit the content ')
+        }
+
     } catch (err) {
-        return res.send(err)
+        console.log(err);
+        return res.status(400).send(err)
     };
 };
 
+
 const removeBlog = async (decoded, req, res, next) => {
     try {
-        blogModel.deleteOne({ userId: decoded.userId })
-            .populate({ path: 'userId' })
-            .exec((err, data) => {
-                if (err) {
-                    res.status(417).send({
-                        status: 417,
-                        err
-                    });
-                } else {
-                    res.status(202).send({
-                        status: 202,
-                        message: 'data deleted',
-                        data
-                    });
-                };
+        const checkUser = await blogModel.findOne({ userId: decoded.userId });
+        if (checkUser) {
+            const deleteBlog = await blogModel.deleteOne({ _id: req.query.Id });
+            return res.status(202).send({
+                status: 202,
+                message: 'blog successful deleted'
             });
+        }
     } catch (err) {
         return res.status(417).send({
             status: 417,
@@ -102,6 +93,8 @@ const removeBlog = async (decoded, req, res, next) => {
         });
     };
 };
+
+
 
 module.exports = {
     createBlog,

@@ -1,12 +1,16 @@
-const {userController} = require('../controller/index');
+const {userController, forgetPass, profilepic} = require('../controller/index');
 const router = require('express').Router();
-const fileUpload = require('../middleware/upload');
 const Auth = require('../middleware/Auth');
+const upload = require('../middleware/upload');
 
 
-router.post('/signup', fileUpload.single('profilepic'), userController.signUp);
+router.post('/signup', userController.signUp);
 router.post('/login', userController.Login);
 router.get('/oneuser', Auth, userController.specificUser);
+router.put('/forgetpassword', forgetPass.forgetPass);
+router.post('/profileimg', upload.single('picture'), Auth, profilepic.setProfile);
+router.put('/editprofile', upload.single('picture'), Auth, profilepic.edituserProfile);
+router.delete('/profileDelete', Auth, profilepic.removeProfile);
 
 
 module.exports = router;

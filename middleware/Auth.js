@@ -1,6 +1,7 @@
 const Jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
+    console.log(`${req.cookies.Token}`, 'qqqqqqqq');
     let decoded;
     let token = '';
     try {

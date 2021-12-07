@@ -1,27 +1,23 @@
 const userModel = require('../models/user.model');
-const Joi = require('joi');
+const commentModel = require('../models/comment.model');
 const bcrypt = require('bcrypt');
 const salt = parseInt(process.env.SALT)
 const token = require('../services/createtoken');
 const sendMailer = require('../services/mailverification');
 const code = require('../services/generatecode');
-const validation = require('../services/datavalidation');
-
+const Joi = require('joi')
 
 const signUp = async (req, res) => {
-    const { name, email, password, gender, location } = req.body;
-    const userData = {
-        name: name,
-        email: email,
-        password: password,
-        profilepic: req.file.filename,
-        gender: gender,
-        location: location
-    };
-
-
-    let dataValidation = validation.validate(userData);
+    const validation = Joi.object({
+        name: Joi.string().required(),
+        email: Joi.string().email().required(),
+        password: Joi.string().alphanum().required(),
+        gender: Joi.string().optional(null),
+        location: Joi.string().optional(null).default(null)
+    });
+    let dataValidation = validation.validate(req.body);
     if (dataValidation.error) {
+        // console.log(dataValidation.error.details[0].message, 'iiii');
         return res.status(300).send({
             error: dataValidation.error.details[0].message,
             status: 300
@@ -36,47 +32,33 @@ const signUp = async (req, res) => {
             email: dataValidation.email,
             password: hashPassword,
             gender: dataValidation.gender,
-            profilepic: dataValidation.profilepic,
             location: dataValidation.location
         };
         const verifyCode = await code.generateRandomCode();
-
         const createUser = await userModel.create(data);
-
         const subject = `verification code is ${verifyCode}`;
         const receiveMail = await sendMailer.mailSender(dataValidation.email, subject, '');
-        const datas = {
-            name: createUser.name,
-            email: createUser.email,
-            gender: createUser.gender,
-            profilepic: createUser.profilepic,
-            location: createUser.location
-        };
         return res.status(201).send({
             status: 201,
-            message: 'user created or verify code send to your gmail',
-            mailResponse: receiveMail.response,
-            datas
+            message: 'user created or verify code send to your gmail'
         });
     } catch (err) {
-        console.log(err);
-        return res.status(406).send({
-            error: 'duplicate key error in collection',
-            status: 406
+        console.log(err.keyValue, 'oooo');
+        return res.status(500).send({
+            message: err.keyValue,
+            status: 500
         });
     };
 };
 
 
 const Login = async (req, res) => {
-    const { name, password, email, gender } = req.body;
-    const loginData = {
-        name: name,
-        password: password,
-        email: email,
-        gender: gender
-    };
-    let loginValidation = validation.validate(loginData);
+    const Validation = Joi.object({
+        name: Joi.string().required(),
+        email: Joi.string().email().required(),
+        password: Joi.string().alphanum().required()
+    });
+    let loginValidation = Validation.validate(req.body);
     if (loginValidation.error) {
         return res.status(406).send({
             status: 406,
@@ -85,46 +67,50 @@ const Login = async (req, res) => {
     } else {
         loginValidation = loginValidation.value;
     };
-    const payload = {
-        name: loginValidation.name,
-        email: loginValidation.email,
-        password: loginValidation.password,
-        gender: loginValidation.gender
-    };
+
     try {
-        const searchUser = await userModel.findOne({ gmail: loginValidation.gmail });
-        payload.userId = searchUser._id;
-        const Token = await token.createToken(payload);
-        const checkPassword = await bcrypt.compare(loginValidation.password, searchUser.password);
-        const datas = {
-            name: searchUser.name,
-            gmail: searchUser.email,
-            gender: searchUser.gender,
-            profilepic: searchUser.profilepic,
-            location: searchUser.location
-        };
-        if (checkPassword) {
-            return res.status(202).send({
-                status: 202,
-                message: 'logged in succesfully',
-                Token,
-                datas
+        const searchUser = await userModel.findOne({ $and: [{ email: loginValidation.email }, { name: loginValidation.name }] });
+        if (searchUser === null) {
+            return res.send({
+                message: 'username or email something is wrong'
             });
+        }
+        const checkPassword = await bcrypt.compare(loginValidation.password, searchUser.password);
+        if (checkPassword) {
+            const payload = {
+                name: searchUser.name,
+                email: searchUser.email,
+                password: searchUser.password,
+                gender: searchUser.gender,
+                userId: searchUser._id
+            };
+            const Token = await token.createToken(payload);
+            return res
+                .cookie("Token", Token, {
+                    expires: new Date(Date.now + 30000),
+                    httpOnly: true
+                })
+                .status(202).send({
+                    status: 202,
+                    message: 'logged in Successful',
+                    Token
+                });
         };
     } catch (err) {
         console.log(err);
         return res.status(400).send({
-            error: err,
+            message: err,
             status: 400
         });
     };
 };
 
 
-const specificUser = async (decoded, req, res, next) => {
-    const { gmail } = req.body;
+const specificUser = async (req, res) => {
+    const decoded = JSON.stringify(req.decoded);
+    const { email } = req.body;
     try {
-        const findUser = await userModel.findOne({ gmail: gmail });
+        const findUser = await userModel.findOne({ email: email });
         return res.status(202).send({
             status: 202,
             message: findUser
@@ -138,10 +124,23 @@ const specificUser = async (decoded, req, res, next) => {
     };
 };
 
+const userProfile = async (decoded, req, res, next) => {
+    try {
+        const user = await commentModel.findOne({ userId: decoded.userId })
+            .populate("userId")
+            .populate("blogId")
+        const userProfile = {
+            name: user.name,
 
+        }
+    } catch (err) {
+
+    }
+}
 
 module.exports = {
     signUp,
     Login,
-    specificUser
+    specificUser,
+    userProfile
 };

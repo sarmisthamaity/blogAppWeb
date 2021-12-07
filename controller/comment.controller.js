@@ -2,21 +2,19 @@ const commentModel = require('../models/comment.model');
 const Joi = require('joi');
 const blogModel = require('../models/blog.model');
 const checkwords = require('../services/checkwords');
-const comvalidation = require('../services/datavalidation')
 
 const createComment = async (decoded, req, res, next) => {
-    const Blog = await blogModel.findOne({ userId: decoded.userId }).populate({ path: 'userId' });
-    const { comment, like, dislike } = req.body;
-    const data = {
-        comment: comment,
-        like: like,
-        dislike: dislike
-    };
-    let commentValidation = comvalidation.validate(data);
+    const Blog = await blogModel.findOne({ userId: decoded.userId });
+    const comvalidation = Joi.object({
+        comment: Joi.string(),
+        like: Joi.number(),
+        dislike: Joi.number()
+    });
+    let commentValidation = comvalidation.validate(req.body);
     if (commentValidation.error) {
         return res.status(400).send({
             status: 400,
-            message: commentValidation.error
+            message: commentValidation.error.details[0].message
         });
     } else {
         commentValidation = commentValidation.value;
@@ -51,7 +49,10 @@ const createComment = async (decoded, req, res, next) => {
 
 const anyUser = async (req, res) => {
     try {
-        const allPosts = await blogModel.find({});
+        const allPosts = await commentModel.find({})
+        .populate("userId")
+        .populate("blogId")
+        console.log(allPosts, );
         return res.status(202).send({
             status: 202,
             allPosts
