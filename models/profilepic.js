@@ -8,9 +8,6 @@ const schema = new mongoose.Schema({
     }, userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user"
-    }, name: {
-        type: String,
-        required: true
     }, bio: {
         type: String,
         defalut: ""

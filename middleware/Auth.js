@@ -1,7 +1,8 @@
 const Jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
-    console.log(`${req.cookies.Token}`, 'qqqqqqqq');
+    // console.log(req.headers.authorization, 'gggggg');
+
     let decoded;
     let token = '';
     try {
@@ -20,6 +21,7 @@ module.exports = (req, res, next) => {
         next(decoded);
     }
     catch (err) {
+        console.log(err);
         return res.status(401).send({
             status: 401,
             message: 'Unauthorized'

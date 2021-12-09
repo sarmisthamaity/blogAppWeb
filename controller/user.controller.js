@@ -86,10 +86,7 @@ const Login = async (req, res) => {
             };
             const Token = await token.createToken(payload);
             return res
-                .cookie("Token", Token, {
-                    expires: new Date(Date.now + 30000),
-                    httpOnly: true
-                })
+            .cookie('Token', Token)
                 .status(202).send({
                     status: 202,
                     message: 'logged in Successful',
@@ -97,7 +94,6 @@ const Login = async (req, res) => {
                 });
         };
     } catch (err) {
-        console.log(err);
         return res.status(400).send({
             message: err,
             status: 400

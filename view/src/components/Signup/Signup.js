@@ -52,7 +52,7 @@ const Register = () => {
     };
     return (
         <div className="register">
-            <h1> Register </h1>
+            <h3> Register </h3>
             <input type="name" name="name" value={user.name} placeholder=" Enter Name" onChange={handleChange} ></input>
             <input type="email" name="email" value={user.email} placeholder=" Enter Email" onChange={handleChange} ></input>
             <input type="text" name="password" value={user.password} placeholder=" Enter Password" onChange={handleChange} ></input>

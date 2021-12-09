@@ -2,11 +2,13 @@ import React, {useState} from 'react';
 import './login.css'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom';
+import { useCookies } from "react-cookie";
 
 
 const Login = () => {
     const history = useHistory();
-    
+    const [cookies, setCookie] = useCookies(["Token"]);
+
     const [user, setUser ] = useState({
         name: "",
         email: "",
@@ -23,15 +25,19 @@ const Login = () => {
         e.preventDefault()
         const {name, email, password} = user
         if(name && email && password ){
-            axios.post('http://127.0.0.1:8080/login', user)
+            axios.post('http://127.0.0.1:8080/login', user, )
             .then((resp) => {
                 alert(resp.data.message)
-                console.log(resp)
+                console.log(resp.data.Token, 'ooooo')
+                setCookie("Token", resp.data.Token, {
+                    path: '/'
+                })
             })
         } else{ 
             alert("invalid")
         }
     }
+
     const resetInputField = () => {
         setUser({
             name: "",
@@ -43,17 +49,17 @@ const Login = () => {
     return(
         <div className="login">
             <h1> Login </h1>
-            {console.log("user", user)}
+            {/* {console.log("user", user)} */}
             <input type="text" name= "name" value={user.name} onChange= {handleChange} placeholder=" Enter Name"  ></input>
             <input type="text" name= "email" value={user.email} onChange= {handleChange} placeholder=" Enter Email"  ></input>
             <input type="password" name= "password" value={user.password} onChange= {handleChange} placeholder=" Enter Password"  ></input>
-            <div className="button" onClick={function(event) { logIn (event);}}> Login </div>
+            <div className="button" onClick={function(event) { logIn (event)}}> Login </div>
             <div> or </div>
             <div className="button" onClick={() => history.push('/signup')}> Registration </div>
         </div>
     )
 }
 
+// resetInputField()
 
-//resetInputField()
 export default Login

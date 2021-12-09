@@ -2,19 +2,20 @@ const profileModel = require('../models/profilepic');
 
 // creating profile picture 
 const setProfile = async (decoded, req, res, next) => {
+    // console.log(req.file, 'uuuuu');
     try {
         const { name, bio } = req.body;
         const data = {
             image: req.file.filename,
-            name: name,
             bio: bio,
             userId: decoded.userId
         };
 
-        const createprofile = await profileModel.create(data);
+        const createProfile = await profileModel.create(data);
         return res.status(202).send({
             status: 202,
-            message: createprofile
+            message: "Successful",
+            createProfile
         });
     } catch (err) {
         console.log(err);

@@ -4,8 +4,9 @@ const userModel = require('../models/user.model');
 const checkWords = require('../services/checkwords');
 
 const createBlog = async (decoded, req, res, next) => {
-    console.log(decoded, 'oooooo');
-    // console.log(req.file, 'oooo');
+    // console.log(decoded, 'iiiii');
+    // console.log(req.file, 'gggggg');
+
     const validation = Joi.object({
         blog: Joi.string(),
         picture: Joi.string()
@@ -33,6 +34,7 @@ const createBlog = async (decoded, req, res, next) => {
         const createBlog = await blogModel.create(blogData);
         return res.status(201).send({
             status: 201,
+            message: 'blog created',
             createBlog
         });
     } catch (err) {
@@ -43,6 +45,7 @@ const createBlog = async (decoded, req, res, next) => {
         });
     };
 };
+
 
 
 const editBlog = async (decoded, req, res, next) => {

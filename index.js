@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('./view/src/logger');
 const morgan = require('morgan');
 
-app.use(cors());
+app.use(cors());  // ({credentials: true, origin: "http://127.0.0.1:8080"}));
 
 app.use(express.json());
 app.use(cookieParser());

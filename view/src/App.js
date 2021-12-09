@@ -4,6 +4,8 @@ import Register from './components/Signup/Signup';
 import Login from './components/Login/Login';
 import {BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import UploadSingleImage from './components/Blog/Blog';
+import UploadProfile from './components/profile/Profile';
+
 
 function App() {
   return (
@@ -13,7 +15,8 @@ function App() {
           <Route exact path= '/'> <Homepage/> </Route>
           <Route path= '/login'> <Login/> </Route>
           <Route path= '/signup'> <Register/> </Route>
-          <route path= '/blogs'> <UploadSingleImage/></route>
+          <Route path= '/blogs'> <UploadSingleImage/></Route>
+          <Route path= '/profileimg'> <UploadProfile/></Route>
         </Switch>
       </Router>
     </div>
