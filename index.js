@@ -1,23 +1,29 @@
 const express = require('express');
-const app = express();
+require('dotenv').config();
+require('./connection/connect');
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const logger = require('./view/src/logger');
 const morgan = require('morgan');
+const routes = require('./routes/index');
+const path = require('path');
 
-app.use(cors());  // ({credentials: true, origin: "http://127.0.0.1:8080"}));
+const app = express();
+
+
+app.use(cors()); 
 
 app.use(express.json());
 app.use(cookieParser());
+app.use("/images", express.static(path.join(__dirname, "images")));
 
-require('dotenv').config();
-require('./connection/connect');
 
 morgan.token('body', (req) => JSON.stringify(req.body));
 morgan.token('id', (req) => req.query.Id)
 
 app.use(morgan(':url :id :method :status :body'))
-const routes = require('./routes/index');
+
+
 app.use('/', routes);
 
 

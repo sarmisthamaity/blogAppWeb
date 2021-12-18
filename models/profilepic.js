@@ -1,19 +1,19 @@
 const { string } = require('joi');
-const mongoose = require('mongoose');
+const Mongoose = require('mongoose');
 
-const schema = new mongoose.Schema({
+const schema = new Mongoose.Schema({
     image: {
         type: String,
         defalut: ""
     }, userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "user"
+        type: Mongoose.Schema.Types.ObjectId,
+        ref: "users"
     }, bio: {
         type: String,
         defalut: ""
     }
 });
 
-const profileModel = mongoose.model('profileimages', schema);
+const profileModel = Mongoose.model('profileimages', schema);
 
 module.exports = profileModel;

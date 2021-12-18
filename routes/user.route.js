@@ -4,13 +4,27 @@ const Auth = require('../middleware/Auth');
 const upload = require('../middleware/upload');
 
 
+// user signup api
 router.post('/signup', userController.signUp);
+
+//user login api
 router.post('/login', userController.Login);
-router.get('/oneuser', Auth, userController.specificUser);
+
+//all user
+router.get('/alluser', Auth, userController.Allusers);
+
+// for forget password its left
 router.put('/forgetpassword', forgetPass.forgetPass);
+
+//user profile image
 router.post('/profileimg', upload.single('file'), Auth, profilepic.setProfile);
-router.put('/editprofile', upload.single('file'), Auth, profilepic.edituserProfile);
+
+// Edit user profile image
+router.put('/editprofile', upload.single('file'), Auth, profilepic.editUserProfile);
+
+// delete user profile image
 router.delete('/profileDelete', Auth, profilepic.removeProfile);
+
 
 
 module.exports = router;

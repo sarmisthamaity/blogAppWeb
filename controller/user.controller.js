@@ -43,7 +43,7 @@ const signUp = async (req, res) => {
             message: 'user created or verify code send to your gmail'
         });
     } catch (err) {
-        console.log(err.keyValue, 'oooo');
+        console.log(err,'ooooo');
         return res.status(500).send({
             message: err.keyValue,
             status: 500
@@ -69,8 +69,9 @@ const Login = async (req, res) => {
     };
 
     try {
-        const searchUser = await userModel.findOne({ $and: [{ email: loginValidation.email }, { name: loginValidation.name }] });
-        if (searchUser === null) {
+        const searchUser = await userModel.findOne({ email: loginValidation.email });
+        console.log(searchUser, '00000000');
+        if (searchUser == null) {
             return res.send({
                 message: 'username or email something is wrong'
             });
@@ -102,23 +103,28 @@ const Login = async (req, res) => {
 };
 
 
-const specificUser = async (req, res) => {
-    const decoded = JSON.stringify(req.decoded);
-    const { email } = req.body;
+const Allusers = async (decoded, req, res, next) => {
+    // const decoded = JSON.stringify(req.decoded);
+    // console.log(decoded, 'ooooo');
+    // console.log('usersssssss');
+    // const { email } = req.body;
     try {
-        const findUser = await userModel.findOne({ email: email });
+        const findUser = await userModel.find({});
         return res.status(202).send({
             status: 202,
-            message: findUser
+            findUser
         });
     } catch (err) {
         console.log(err);
+        console.log('gggg');
         return res.status(400).send({
             status: 400,
             error: err
         });
     };
 };
+
+
 
 const userProfile = async (decoded, req, res, next) => {
     try {
@@ -137,6 +143,6 @@ const userProfile = async (decoded, req, res, next) => {
 module.exports = {
     signUp,
     Login,
-    specificUser,
+    Allusers,
     userProfile
 };

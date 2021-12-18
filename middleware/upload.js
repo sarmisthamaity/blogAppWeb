@@ -1,14 +1,19 @@
 const multer = require('multer');
+const path = require('path')
+
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, './images');
     }, filename: (req, file, callback) => {
-        callback(null, Date.now() + "___" + file.originalname);
+        callback(null, file.originalname);
     }
 });
 
-const maxSize = 1 * 1024 * 1024            // approxmately 5MB
+// const s = path.join(path.dirname(__dirname)) + '/images'
+// console.log(s, 'nnnnnn');
+
+const maxSize = 3 * 1024 * 1024            // approxmately 5MB
 
 const fileUpload = multer({
     storage: fileStorage,

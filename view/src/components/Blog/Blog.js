@@ -4,16 +4,19 @@ import './blog.css'
 
 import { useCookies } from "react-cookie";
 
+
 const UploadSingleImage = () => {
     const [blog, setBlog] = useState();
     const [picture, setPicture] = useState();
 
     const [cookies, setCookie] = useCookies(["Token"]);
 
+    const formData = new FormData();
+
     const Send = event => {
-        const formData = new FormData();
         formData.append("blog", blog);
         formData.append("file", picture)
+        
         // console.log(formData, cookies);
         const config = {
             headers: {
@@ -29,10 +32,33 @@ const UploadSingleImage = () => {
                 console.log(err);
             })
     }
+    
+    const editBlog = event => {
+        formData.append("blog", blog);
+        formData.append("file", picture)
+        
+        // console.log(formData, cookies);
+        const config = {
+            headers: {
+                authorization: cookies.Token
+            }
+        }
+
+        axios.put('http://127.0.0.1:8080/editContent', formData, config)
+            .then(response => {
+                alert(response.data.message)
+                console.log(response.data, 'vvvv');
+            }).catch(err => {
+                console.log(err, 'jjjjj');
+            })
+    }
+
+
+
     return (
         <div className="blog">
             <h1> Blog Post </h1>
-            <input type="text" id="name" onChange={event => {
+            <input type="text" id="blog" placeholder="About Your Post" onChange={event => {
                 const { value } = event.target
                 setBlog(value)
             }} />
@@ -42,7 +68,9 @@ const UploadSingleImage = () => {
                 setPicture(picture)
             }}></input> 
             <br/>
-            <button onClick={Send}>Send</button>       
+            <button onClick={Send}>Send</button>
+            <div> or</div>
+            <button onClick={editBlog}>edit</button>
         </div>
     )
 

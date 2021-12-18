@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-
 mongoose.connect(process.env.URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -10,3 +9,23 @@ mongoose.connect(process.env.URL, {
 }).catch((err) => {
     console.log(err);
 });
+
+
+//user 1
+
+// "name": "anuj",
+// "password": "anuj123",
+// "email": "anup@gmail.com"
+
+
+// user 2
+
+// "name": "anuj",
+// "password": "anuj123",
+// "email": "anuj@gmail.com",
+
+//user 3
+
+// "name": "ankit",
+// "password": "ankit123",
+// "email": "ankit@gmail.com",

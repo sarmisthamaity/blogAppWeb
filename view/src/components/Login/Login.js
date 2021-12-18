@@ -7,7 +7,7 @@ import { useCookies } from "react-cookie";
 
 const Login = () => {
     const history = useHistory();
-    const [cookies, setCookie] = useCookies(["Token"]);
+    const [cookies, setCookie] = useCookies(["Token", "isAuthenticated"]);
 
     const [user, setUser ] = useState({
         name: "",
@@ -28,16 +28,18 @@ const Login = () => {
             axios.post('http://127.0.0.1:8080/login', user, )
             .then((resp) => {
                 alert(resp.data.message)
-                console.log(resp.data.Token, 'ooooo')
-                setCookie("Token", resp.data.Token, {
-                    path: '/'
-                })
+                // console.log(resp.data.Token, 'ooooo')
+                setCookie("Token", resp.data.Token)
+                setCookie("isAuthenticated", true)
+            // localStorage.setItem("isAuthenticated", "true");
+            // localStorage.setItem("Token", resp.data.Token);
+
             })
         } else{ 
             alert("invalid")
         }
     }
-
+    
     const resetInputField = () => {
         setUser({
             name: "",
@@ -48,7 +50,7 @@ const Login = () => {
 
     return(
         <div className="login">
-            <h1> Login </h1>
+            <h2> Login </h2>
             {/* {console.log("user", user)} */}
             <input type="text" name= "name" value={user.name} onChange= {handleChange} placeholder=" Enter Name"  ></input>
             <input type="text" name= "email" value={user.email} onChange= {handleChange} placeholder=" Enter Email"  ></input>
@@ -59,6 +61,7 @@ const Login = () => {
         </div>
     )
 }
+
 
 // resetInputField()
 

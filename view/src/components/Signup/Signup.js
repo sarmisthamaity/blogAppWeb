@@ -3,6 +3,8 @@ import './signup.css'
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 
+
+
 const Register = () => {
     const history = useHistory();
 
@@ -50,9 +52,10 @@ const Register = () => {
             location: ""
         });
     };
+
     return (
         <div className="register">
-            <h3> Register </h3>
+            <h2> Register </h2>
             <input type="name" name="name" value={user.name} placeholder=" Enter Name" onChange={handleChange} ></input>
             <input type="email" name="email" value={user.email} placeholder=" Enter Email" onChange={handleChange} ></input>
             <input type="text" name="password" value={user.password} placeholder=" Enter Password" onChange={handleChange} ></input>
@@ -60,12 +63,14 @@ const Register = () => {
             <input type="text" name="location" value={user.location} placeholder=" Enter location" onChange={handleChange} ></input>
 
             <div className="button" onClick={function (event) { register(event); resetInputField() }} > Register </div>
-            
+
             <div> or </div>
             <div className="button" onClick={() => history.push('/login')}> Login</div>
 
         </div>
     )
+
+
 }
 
 

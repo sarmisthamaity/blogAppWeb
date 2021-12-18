@@ -9,7 +9,7 @@ const createBlog = async (decoded, req, res, next) => {
 
     const validation = Joi.object({
         blog: Joi.string(),
-        picture: Joi.string()
+        file: Joi.string()
     });
     let validationOfContent = validation.validate(req.body);
     if (validationOfContent.error) {
@@ -28,7 +28,7 @@ const createBlog = async (decoded, req, res, next) => {
         };
         const blogData = {
             blog: validationOfContent.blog,
-            picture: req.file.filename,
+            image: req.file.filename,
             userId: userName._id
         };
         const createBlog = await blogModel.create(blogData);
@@ -61,16 +61,16 @@ const editBlog = async (decoded, req, res, next) => {
         contentValidation = contentValidation.value;
     };
     try {
-        const checkUser = await blogModel.findOne({ userId: decoded.userId });
-        if (checkUser) {
-            const updateData = await blogModel.findByIdAndUpdate({ _id: req.query.Id }, contentValidation, { new: true });
-            return res.status(202).send({
-                status: 202,
-                updateData
-            });
-        } else {
-            res.send('you can"t edit the content ')
-        }
+        // const checkUser = await blogModel.findOne({ userId: decoded.userId });
+        // if (checkUser) {
+        const updateData = await blogModel.findByIdAndUpdate({ _id: req.query.Id }, contentValidation, { new: true });
+        return res.status(202).send({
+            status: 202,
+            updateData
+        });
+        // } else {
+        //     res.send('you can"t edit the content ')
+        // }
 
     } catch (err) {
         console.log(err);

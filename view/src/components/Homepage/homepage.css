@@ -3,22 +3,22 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 50vh;
-    height: 50vh;
-    border-radius: 20px;
-    box-shadow: 0 0 15px 5px grey;
-    background: white;
+    width: 20%;
+    height: 30%;
+    border-radius: 10px;
+    box-shadow: 0 0 15px 5px ;
+    background: dark;
     position: relative;
 }
 
 .homepage > .button {
-    background: #181818;
+    background: gray;
     border: 1px solid #181818;
-    color: #fff;
+    color: dark;
     font-size: 1.25rem;
     padding: 0.5rem;
     margin: 00.5rem;
-    border-radius: 8px;
+    border-radius: 8%;
     outline: none;
     cursor: pointer;
 }
