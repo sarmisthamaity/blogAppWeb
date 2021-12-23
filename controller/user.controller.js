@@ -18,9 +18,9 @@ const signUp = async (req, res) => {
     let dataValidation = validation.validate(req.body);
     if (dataValidation.error) {
         // console.log(dataValidation.error.details[0].message, 'iiii');
-        return res.status(300).send({
+        return res.status(400).send({
             error: dataValidation.error.details[0].message,
-            status: 300
+            status: 400
         });
     } else {
         dataValidation = dataValidation.value;
@@ -53,6 +53,7 @@ const signUp = async (req, res) => {
 
 
 const Login = async (req, res) => {
+    console.log(req.body, 'kkkkkkk');
     const Validation = Joi.object({
         name: Joi.string().required(),
         email: Joi.string().email().required(),
@@ -70,7 +71,7 @@ const Login = async (req, res) => {
 
     try {
         const searchUser = await userModel.findOne({ email: loginValidation.email });
-        console.log(searchUser, '00000000');
+        // console.log(searchUser, '00000000');
         if (searchUser == null) {
             return res.send({
                 message: 'username or email something is wrong'
@@ -87,7 +88,7 @@ const Login = async (req, res) => {
             };
             const Token = await token.createToken(payload);
             return res
-            .cookie('Token', Token)
+            // .cookie('Token', Token)
                 .status(202).send({
                     status: 202,
                     message: 'logged in Successful',

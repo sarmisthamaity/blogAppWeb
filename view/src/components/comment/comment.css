@@ -1,3 +1,10 @@
+.centered {
+    height: 100vh; /* Magic here */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .comment {
     display: flex;
     flex-direction: column;

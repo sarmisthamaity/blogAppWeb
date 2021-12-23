@@ -14,5 +14,9 @@ router.put('/editContent', Auth, blogController.editBlog);
 // to delete blog and image
 router.delete('/removeBlog', Auth, blogController.removeBlog);
 
+//get all blog of a user
+router.get('/allBlogs', Auth, blogController.getBlog)
+
+
 
 module.exports = router;

@@ -29,11 +29,11 @@ const AllPostBlogs = () => {
     const renderCard = (card, index) => {
         // console.log((card.image), "card")
         // console.log(index, "index")
-        
+        const imageUrl = `http://127.0.0.1:8080/${card.image}`
         return (     
 
             <Card style={{ width: "22rem" }}>
-                <Card.Img variant="top" src={card.image}/>
+                <Card.Img variant="top" style={{width: '5rem', height: '5rem'}} src={imageUrl}/>
                 <Card.Body>
                 
                     <Card.Title style={{ color: "green" }}>{card.blog}</Card.Title>

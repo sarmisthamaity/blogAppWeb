@@ -3,6 +3,8 @@ const blogModel = require('../models/blog.model');
 const userModel = require('../models/user.model');
 const checkWords = require('../services/checkwords');
 
+
+
 const createBlog = async (decoded, req, res, next) => {
     // console.log(decoded, 'iiiii');
     // console.log(req.file, 'gggggg');
@@ -28,7 +30,7 @@ const createBlog = async (decoded, req, res, next) => {
         };
         const blogData = {
             blog: validationOfContent.blog,
-            image: req.file.filename,
+            image: req.file.path,
             userId: userName._id
         };
         const createBlog = await blogModel.create(blogData);
@@ -49,6 +51,7 @@ const createBlog = async (decoded, req, res, next) => {
 
 
 const editBlog = async (decoded, req, res, next) => {
+    console.log("asdfghjkcvbnsdfghxcvbnm");
     const validation = Joi.object({
         blog: Joi.string(),
         picture: Joi.string()
@@ -63,7 +66,7 @@ const editBlog = async (decoded, req, res, next) => {
     try {
         // const checkUser = await blogModel.findOne({ userId: decoded.userId });
         // if (checkUser) {
-        const updateData = await blogModel.findByIdAndUpdate({ _id: req.query.Id }, contentValidation, { new: true });
+        const updateData = await blogModel.findByIdAndUpdate({ _id: req.query.ID }, contentValidation, { new: true });
         return res.status(202).send({
             status: 202,
             updateData
@@ -71,7 +74,6 @@ const editBlog = async (decoded, req, res, next) => {
         // } else {
         //     res.send('you can"t edit the content ')
         // }
-
     } catch (err) {
         console.log(err);
         return res.status(400).send(err)
@@ -79,20 +81,45 @@ const editBlog = async (decoded, req, res, next) => {
 };
 
 
+
+
+
+const getBlog = async (decoded, req, res, next) => {
+    // console.log(req.file, 'cccccc');
+    try {
+        const userBlog = await blogModel.find({ userId: decoded.userId }, { userId: 0, __v: 0 })
+        // console.log(userBlog, 'mmmm');
+        return res.status(200)
+            .send({
+                status: 200,
+                userBlog
+            })
+    } catch (err) {
+        // console.log(err, 'nnnnnnnnn');
+        return res.status(400).send({
+            status: 400,
+            message: err
+        })
+    };
+};
+
+
+
+
 const removeBlog = async (decoded, req, res, next) => {
     try {
-        const checkUser = await blogModel.findOne({ userId: decoded.userId });
-        if (checkUser) {
-            const deleteBlog = await blogModel.deleteOne({ _id: req.query.Id });
-            return res.status(202).send({
-                status: 202,
-                message: 'blog successful deleted'
-            });
-        }
+        // const checkUser = await blogModel.findOne({ userId: decoded.userId });
+        // if (checkUser) {
+        const deleteBlog = await blogModel.deleteOne({ _id: req.query.Id });
+        return res.status(202).send({
+            status: 202,
+            message: 'blog successful deleted'
+        });
+        // }
     } catch (err) {
         return res.status(417).send({
             status: 417,
-            messageError: err
+            message: err
         });
     };
 };
@@ -102,5 +129,6 @@ const removeBlog = async (decoded, req, res, next) => {
 module.exports = {
     createBlog,
     editBlog,
-    removeBlog
+    removeBlog,
+    getBlog
 };

@@ -6,11 +6,11 @@ import { useCookies } from "react-cookie";
 const GetUserProfile = () => {
     const [image, setImage] = useState('');
     const [content, setContent] = useState({ data: [] })
-    const [cookies, setCookie] = useCookies(["Token"]);
+    const Token = localStorage.getItem('Token');
 
     const config = {
         headers: {
-            authorization: cookies.Token
+            authorization: Token
         }
     }
 
@@ -20,7 +20,7 @@ const GetUserProfile = () => {
                 .then((resp) => {
                     // console.log(resp.data.url, 'xxxxxxx');
                     // console.log(resp.data.userProfile.image, 'uuuuu');
-                    console.log(resp.data)
+                    // console.log(resp.data)
                     setContent({ data: resp.data.userProfile })
                     // alert('get data')
                     setImage(`http://127.0.0.1:8080/${resp.data.userProfile.image}`)
@@ -31,9 +31,12 @@ const GetUserProfile = () => {
         }
         userData()
     }, [setContent])
+
+    
     return (
         <div>
             <img src={image} alt= "hello" />
+            {/* <imag src= `'images/Screenshot from 2021-09-25 18-38-36.png'` />  */}
         </div>
     )
 };

@@ -8,6 +8,7 @@ mongoose.connect(process.env.URL, {
     console.log(`database connected securely`);
 }).catch((err) => {
     console.log(err);
+    console.log()
 });
 
 

@@ -76,12 +76,11 @@ const getUserProfile = async (req, res) => {
     // const url = req.protocol + "://" + req.get("host");
     // console.log(url, 'bbbb');
     try {
-        const userProfile = await profileModel.findOne({_id: "61bc3bac4862f3e4bab54c27"})
+        const userProfile = await profileModel.findOne({_id: "61bc3e24847a2154452ed24d"})
             .populate('userId');
         console.log(userProfile, 'mmmmmm');
             return res.status(202).send({
                 status: 202,
-                url: url,
                 userProfile
             })
     } catch (err) {

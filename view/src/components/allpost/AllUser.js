@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import { useCookies } from "react-cookie";
 import * as ReactBootstrap from 'react-bootstrap';
 
 const AllUser = () => {
 
-
     const [image, setImage] = useState('');
     const [data, setData] = useState({ postData: [] })
-    const [cookies, setCookie] = useCookies(["Token"]);
+
+    const Token = localStorage.getItem('Token');
 
     const config = {
         headers: {
-            authorization: cookies.Token
+            authorization: Token
         }
     }
 
@@ -31,14 +30,15 @@ const AllUser = () => {
     }, [setData])
 
 
+    
     return (
         <ReactBootstrap.Table striped bordered hover>
             <thead>
                 <tr>
                     <th>name</th>
                     <th>email</th>
-                    <th>location</th>
                     <th>gender</th>
+                    <th>location</th>
                 </tr>
             </thead>
             <tbody>
@@ -50,11 +50,9 @@ const AllUser = () => {
                         <td>{item.location}</td>
                     </tr>
                 ))}
-
             </tbody>
         </ReactBootstrap.Table>
     )
-
 };
 
 

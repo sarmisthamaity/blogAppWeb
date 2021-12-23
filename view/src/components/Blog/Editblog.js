@@ -6,24 +6,29 @@ const EditBlog = () => {
     const [bio, setBio] = useState();
     const [picture, setPicture] = useState('');
 
-    const [cookies, setCookie] = useCookies(["Token"]);
+    const Token = localStorage.getItem('Token')
+    const search = window.location.search;
 
+    const Id = new URLSearchParams(search).get('ID');
+    // console.log(Id, 'mmmmmm');
+    
     const Send = event => {
         const formData = new FormData();
         formData.append("bio", bio);
         formData.append("file", picture)
         
-        // console.log(formData, cookies);
+        // console.log(formData);
+
         const config = {
             headers: {
-                authorization: cookies.Token
+                authorization: Token
             }
         }
 
-        axios.put('http://127.0.0.1:8080/editContent', formData, config)
+        axios.put(`/?ID=${Id}'`, formData, config)
             .then(response => {
                 alert(response.data.message)
-                console.log(response.data, 'vvvv');
+                // console.log(response.data, 'vvvv');
             }).catch(err => {
                 console.log(err);
             })
@@ -31,8 +36,8 @@ const EditBlog = () => {
 
     return (
         <div className="blog">
-            <h1> Blog Post </h1>
-            <input type="text" id="blog" placeholder="About Your Post" onChange={event => {
+            <h1>Edit Blog Post </h1>
+            <input type="text" id="blog" placeholder="Edit Your Post" onChange={event => {
                 const { value } = event.target
                 setBio(value)
             }} />

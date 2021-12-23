@@ -4,7 +4,6 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 
 
-
 const Register = () => {
     const history = useHistory();
 
@@ -32,7 +31,8 @@ const Register = () => {
             axios.post('http://127.0.0.1:8080/signup', user)
                 .then((resp) => {
                     alert(resp.data.message)
-                    console.log(resp)
+                    // console.log(resp)
+                    history.push('/login')
 
                 }).catch((err) => {
                     console.log(err.message);
@@ -54,23 +54,24 @@ const Register = () => {
     };
 
     return (
-        <div className="register">
-            <h2> Register </h2>
-            <input type="name" name="name" value={user.name} placeholder=" Enter Name" onChange={handleChange} ></input>
-            <input type="email" name="email" value={user.email} placeholder=" Enter Email" onChange={handleChange} ></input>
-            <input type="text" name="password" value={user.password} placeholder=" Enter Password" onChange={handleChange} ></input>
-            <input type="text" name="gender" value={user.gender} placeholder=" Enter Gender" onChange={handleChange} ></input>
-            <input type="text" name="location" value={user.location} placeholder=" Enter location" onChange={handleChange} ></input>
+        <div className='centered'>
+            <div className="register">
+                <h2> Register </h2>
+                <input type="name" name="name" value={user.name} placeholder=" Enter Name" onChange={handleChange} ></input>
+                <input type="email" name="email" value={user.email} placeholder=" Enter Email" onChange={handleChange} ></input>
+                <input type="text" name="password" value={user.password} placeholder=" Enter Password" onChange={handleChange} ></input>
+                <input type="text" name="gender" value={user.gender} placeholder=" Enter Gender" onChange={handleChange} ></input>
+                <input type="text" name="location" value={user.location} placeholder=" Enter location" onChange={handleChange} ></input>
 
-            <div className="button" onClick={function (event) { register(event); resetInputField() }} > Register </div>
+                <div className="button" onClick={function (event) { register(event); }} > Register </div>
 
-            <div> or </div>
-            <div className="button" onClick={() => history.push('/login')}> Login</div>
+                <div> or </div>
 
+                <div className="button" onClick={() => history.push('/login')}> Login</div>
+
+            </div>
         </div>
     )
-
-
 }
 
 

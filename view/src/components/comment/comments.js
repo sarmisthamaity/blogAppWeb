@@ -1,19 +1,21 @@
 import './comment.css'
 import React, { useState } from 'react'
 import axios from 'axios';
-import { useCookies } from 'react-cookie';
+
+
 
 
 const Comment = () => {
-    console.log("hello");
-    const [cookies, setCookie] = useCookies(["Token"]);
+
+    const Token = localStorage.getItem('Token');
+
     const [ Datas, setData ] = useState({
         comment: "",
         like: ""
     });
 
     const handleInput = ( e ) => {
-        console.log("whats' up");
+        // console.log("whats' up");
         const { name, value } = e.target;
         setData({
             ...Datas,
@@ -23,9 +25,9 @@ const Comment = () => {
     };
     const config = {
         headers: {
-            authorization: cookies.Token
+            authorization: Token
         }
-    }
+    };
     
     // console.log(config, 'uuuuu');
 
