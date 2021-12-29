@@ -19,21 +19,25 @@ const Navbar = () => {
                     <NavLink to='/login' activeStyle>
                         Login
                     </NavLink>
-                    <NavLink to='/signup' activeStyle>
+                    <NavLink to='/sign' activeStyle>
                         Signup
                     </NavLink>
-                    <NavLink to='/' activeStyle>
-                        Homepage
+                    <NavLink to='/profileimg' activeStyle>
+                        CreateProfile
                     </NavLink>
                     <NavLink to='/blog' activeStyle>
-                        Blog
+                        CreateBlog
                     </NavLink>
-                    <NavLink to='/blogComments' activeStyle>
-                        ShowPost
+                    <NavLink to='/' activeStyle>
+                        AllBlogs
                     </NavLink>
-                    {/* <NavLink to='/sign-up' activeStyle>
-            Sign Up
-          </NavLink>  */}
+                   
+                    <NavLink to='/userprofile' activeStyle>
+                        getProfile
+                    </NavLink>
+
+
+
                     {/* Second Nav */}
                     {/* <NavBtnLink to='/sign-in'>Sign In</NavBtnLink> */}
                 </NavMenu>
@@ -44,5 +48,7 @@ const Navbar = () => {
         </>
     );
 };
+
+
 
 export default Navbar;

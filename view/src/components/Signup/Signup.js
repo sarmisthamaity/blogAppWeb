@@ -6,6 +6,8 @@ import { useHistory } from 'react-router-dom';
 
 const Register = () => {
     const history = useHistory();
+    const [errorMessage, setErrorMessage] = useState();
+    const [success, setSuccess] = useState();
 
     const [user, setUser] = useState({
         name: "",
@@ -23,26 +25,20 @@ const Register = () => {
             [name]: value
         })
     }
-    const register = (e) => {
-        e.preventDefault()
-        const { name, email, password } = user
-        if (name && email && password) {
-            // alert("posted")
-            axios.post('http://127.0.0.1:8080/signup', user)
-                .then((resp) => {
-                    alert(resp.data.message)
-                    // console.log(resp)
-                    history.push('/login')
 
-                }).catch((err) => {
-                    console.log(err.message);
-                })
-
-            // console.log(user, 'fff');
-        } else {
-            alert("invalid")
+    const register = async () => {
+        try {
+            const res = await axios.post('http://127.0.0.1:8080/signup', user)
+            setSuccess(res.data.message)
+            history.push('/SignIn')
+        } catch (err) {
+            console.log("inside catch");
+            setErrorMessage(err.response.data.message)
+            console.log(err.response.data.message);
         }
+
     }
+
     const resetInputField = () => {
         setUser({
             name: "",
@@ -53,25 +49,39 @@ const Register = () => {
         });
     };
 
+
+
     return (
         <div className='centered'>
             <div className="register">
                 <h2> Register </h2>
+
                 <input type="name" name="name" value={user.name} placeholder=" Enter Name" onChange={handleChange} ></input>
                 <input type="email" name="email" value={user.email} placeholder=" Enter Email" onChange={handleChange} ></input>
-                <input type="text" name="password" value={user.password} placeholder=" Enter Password" onChange={handleChange} ></input>
-                <input type="text" name="gender" value={user.gender} placeholder=" Enter Gender" onChange={handleChange} ></input>
-                <input type="text" name="location" value={user.location} placeholder=" Enter location" onChange={handleChange} ></input>
+                <input type="password" name="password" value={user.password} placeholder=" Enter Password" onChange={handleChange} ></input>
+                <input type="text" name="gender" value={user.gender} placeholder=" Enter Gender (optional)" onChange={handleChange} ></input>
+                <input type="text" name="location" value={user.location} placeholder=" Enter location(optional)" onChange={handleChange} ></input>
 
-                <div className="button" onClick={function (event) { register(event); }} > Register </div>
+                <div className='sign'>
 
+                    <button onClick={register}>Register </button>
+
+                    {errorMessage && <div className="error"> {errorMessage} </div>}
+
+                </div>
                 <div> or </div>
 
-                <div className="button" onClick={() => history.push('/login')}> Login</div>
+                <div className='sign'>
+                    <button onClick={() => history.push('/login')}>Login</button>
+
+                </div>
+
 
             </div>
         </div>
     )
+
+
 }
 
 

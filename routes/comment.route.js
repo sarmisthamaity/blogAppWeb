@@ -12,10 +12,10 @@ router.post('/comments', Auth, commentController.createComment);
 router.get('/allposts', commentController.anyUser);
 
 // to get all comments and like
-router.get('/blogComments', forgetPass.allComment);
+router.get('/allUsersBlogs', forgetPass.AllBlogPosts);
 
 // get userProfile
-router.get('/userprofile', forgetPass.getUserProfile);
+router.get('/userprofile', Auth, forgetPass.getUserProfile);
 
 
 module.exports = router;

@@ -3,7 +3,6 @@ const profileModel = require('../models/profilepic');
 // creating profile picture 
 const setProfile = async (decoded, req, res, next) => {
     // console.log(req.get("host"), 'uuuuu');
-    const url = req.protocol + "://" + req.get("host");
     // console.log(url, 'bbbbb');
     try {
         // const { name, bio } = req.body;
@@ -21,7 +20,7 @@ const setProfile = async (decoded, req, res, next) => {
             createProfile
         });
     } catch (err) {
-        console.log(err);
+        // console.log(err);
         return res.status(300).send({
             status: 300,
             message: 'profile picture not set'
@@ -33,7 +32,7 @@ const setProfile = async (decoded, req, res, next) => {
 
 const editUserProfile = async (decoded, req, res, next) => {
     // console.log(decoded, 'xxxxxxxx');
-    console.log(req.file, 'mmmmmmm');
+    // console.log(req.file, 'mmmmmmm');
     try {
         const Data = {
             image: req.file.filename,
@@ -69,18 +68,18 @@ const editUserProfile = async (decoded, req, res, next) => {
 
 const removeProfile = async (decoded, req, res, next) => {
     try {
-        const checkuser = await profileModel.findOne({ userId: decoded.userId });
-        if (checkuser) {
-            const removeUser = await profileModel.deleteOne({ image: checkuser.image });
+        const checkUser = await profileModel.findOne({ userId: decoded.userId });
+        if (checkUser) {
+            const removeUser = await profileModel.deleteOne({ image: checkUser.image });
             return res.status(202).send({
                 status: 202,
-                message: 'delete succesfully'
+                message: 'delete successful'
             });
         } else {
-            res.send("don't have asscess to delete the profile image")
+            res.send("don't have assess to delete the profile image")
         }
     } catch (err) {
-        console.log(err);
+        // console.log(err);
         return res.status(300).send({
             error: 300,
             error: err

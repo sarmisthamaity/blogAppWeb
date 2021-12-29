@@ -25,21 +25,21 @@ const GetOneUser = () => {
             axios.get('http://127.0.0.1:8080/allBlogs', config)
                 .then(response => {
                     // alert(response.data.message)
-                    // console.log(response.data, 'vvvv');
+                    console.log(response.data, 'vvvv');
                     setUserData({ container: response.data.userBlog })
                 }).catch(err => {
                     console.log(err);
                 })
         }
         userPost();
-    }, [])
+    }, [setUserData])
 
 
     // console.log(userData, 'dadaert');
 
     const renderUserData = (card, index) => {
         const imageUrl = `http://127.0.0.1:8080/${card.image}`
-        // console.log(imageUrl, 'fffff')
+        console.log(imageUrl, 'fffff')
         return (
 
             <Card style={{ width: "22rem" }}>
@@ -79,6 +79,7 @@ const GetOneUser = () => {
     }
 
 
+
     return (
         <div>
             {/* <img src={image} alt="hello" /> */}
@@ -91,3 +92,7 @@ const GetOneUser = () => {
 
 
 export default GetOneUser;
+
+
+
+// userprofile

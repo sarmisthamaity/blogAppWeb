@@ -13,10 +13,10 @@ const userSchema = new mongoose.Schema({
         type: String
     }, gender: {
         type: String,
-        enum : ['male','female'], 
+        enum : ['male','female', 'other'], 
     }, location: {
         type: String,
-        default: ''
+        default: ' '
     }
 });
 

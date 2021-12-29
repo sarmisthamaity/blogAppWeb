@@ -10,11 +10,6 @@ const Homepage = () => {
         history.push('/signUp')
     }
 
-    // const handleData = () => {
-    //     history.push('/blogComments')
-    // }
-
-
     return (
         <div className='centered'>
             <div className="homepage">

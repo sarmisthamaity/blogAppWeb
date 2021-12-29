@@ -11,7 +11,7 @@ router.post('/signup', userController.signUp);
 router.post('/login', userController.Login);
 
 //all user
-router.get('/alluser', Auth, userController.Allusers);
+router.get('/alluser', Auth, userController.AllUsers);
 
 // for forget password its left
 router.put('/forgetpassword', forgetPass.forgetPass);

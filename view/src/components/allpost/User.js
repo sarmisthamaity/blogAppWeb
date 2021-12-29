@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useCookies } from "react-cookie";
+import { MDBRow, MDBCol } from 'mdb-react-ui-kit';
 
 
 const GetUserProfile = () => {
@@ -16,32 +16,40 @@ const GetUserProfile = () => {
 
     useEffect(() => {
         const userData = async () => {
-            await axios.get('http://127.0.0.1:8080/userprofile')
+            await axios.get('http://127.0.0.1:8080/userprofile', config)
                 .then((resp) => {
-                    // console.log(resp.data.url, 'xxxxxxx');
-                    // console.log(resp.data.userProfile.image, 'uuuuu');
-                    // console.log(resp.data)
-                    setContent({ data: resp.data.userProfile })
+                    // console.log(resp.data.Datas)
+
+                    setContent({ data: resp.data.Datas })
                     // alert('get data')
-                    setImage(`http://127.0.0.1:8080/${resp.data.userProfile.image}`)
+                    setImage(`http://127.0.0.1:8080/${resp.data.Datas.image}`)
                 })
                 .catch((err) => {
                     console.log(err);
                 })
         }
         userData()
-    }, [setContent])
+    }, [])
 
-    
     return (
-        <div>
-            <img src={image} alt= "hello" />
-            {/* <imag src= `'images/Screenshot from 2021-09-25 18-38-36.png'` />  */}
+        <div className="centered" style={{ backgroundColor: "lightsteelblue" }}>
+            <MDBRow>
+                <MDBCol lg='8' md='6' className='mb-2'>
+                    <img
+                        src={image}
+                        className='rounded-circle'
+                        alt=''
+                        style={{
+                            height: '200px',
+                            width: '200px'
+                        }}
+                    />
+                </MDBCol>
+
+            </MDBRow>
         </div>
     )
 };
-
-
 
 
 export default GetUserProfile;

@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { Console } = require('winston/lib/winston/transports');
 const blogModel = require('../models/blog.model');
 const userModel = require('../models/user.model');
 const checkWords = require('../services/checkwords');
@@ -7,8 +8,8 @@ const checkWords = require('../services/checkwords');
 
 const createBlog = async (decoded, req, res, next) => {
     // console.log(decoded, 'iiiii');
-    // console.log(req.file, 'gggggg');
-
+    console.log(req.file, 'gggggg');
+    // console.log('hello')
     const validation = Joi.object({
         blog: Joi.string(),
         file: Joi.string()
@@ -34,10 +35,10 @@ const createBlog = async (decoded, req, res, next) => {
             userId: userName._id
         };
         const createBlog = await blogModel.create(blogData);
+        console.log(createBlog, 'LLLLLLLLL')
         return res.status(201).send({
             status: 201,
-            message: 'blog created',
-            createBlog
+            message: 'blog created'
         });
     } catch (err) {
         console.log(err);
@@ -88,7 +89,7 @@ const getBlog = async (decoded, req, res, next) => {
     // console.log(req.file, 'cccccc');
     try {
         const userBlog = await blogModel.find({ userId: decoded.userId }, { userId: 0, __v: 0 })
-        // console.log(userBlog, 'mmmm');
+        console.log(userBlog, 'mmmm');
         return res.status(200)
             .send({
                 status: 200,

@@ -29,9 +29,8 @@ const forgetPass = async (req, res) => {
 };
 
 
-// 61a8cab982b09788d6add8de
 
-const allComment = async (req, res) => {
+const AllBlogPosts = async (req, res) => {
     // const allData = await commentModel.find({ _id: req.query.ID })
     //     .populate('userId')
     //     .populate('blogId')
@@ -54,7 +53,7 @@ const allComment = async (req, res) => {
             }
         }
         ])
-        console.log(allData, 'iiiii');
+        // console.log(allData, 'iiiii');
 
         return res.status(202)
             .send({
@@ -62,7 +61,7 @@ const allComment = async (req, res) => {
                 allData
             })
     } catch (err) {
-        console.log(err);
+        // console.log(err);
         return res.send({
             status: 400,
             message: err
@@ -72,32 +71,31 @@ const allComment = async (req, res) => {
 
 
 
-const getUserProfile = async (req, res) => {
-    // const url = req.protocol + "://" + req.get("host");
-    // console.log(url, 'bbbb');
+const getUserProfile = async (decoded, req, res, next) => {
     try {
-        const userProfile = await profileModel.findOne({_id: "61bc3e24847a2154452ed24d"})
+        const userProfile = await profileModel.findOne({ _id: "61cabfe001a0793e76ecb08a" })
             .populate('userId');
-        console.log(userProfile, 'mmmmmm');
-            return res.status(202).send({
-                status: 202,
-                userProfile
-            })
+
+        const Datas = {
+            image: userProfile.image,
+            name: userProfile.userId.name,
+            bio: userProfile.bio
+        }
+        return res.status(202).send({
+            status: 202,
+            Datas
+        })
     } catch (err) {
-        console.log(err, 'ppppp');
         return res.status(400).send({
             status: 400,
-            error: err
+            err
         })
     }
 }
 
 
-// /home/infistack/Documents/blogAppWeb/images
-
-
 module.exports = {
     forgetPass,
-    allComment,
+    AllBlogPosts,
     getUserProfile
 };

@@ -1,11 +1,10 @@
-import './App.css';
-import Homepage from './components/Homepage/Homepage';
-import Register from './components/Signup/Signup';
-import Login from './components/Login/Login';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import UploadSingleImage from './components/Blog/CreateBlog';
-import UploadProfile from './components/profile/Profile';
 import React from 'react';
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Homepage from './components/Homepage/Homepage';
+// import Register from './components/Signup/Signup';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import UploadProfile from './components/profile/Profile';
 import ProtectedRoute from './components/protected';
 import Comment from './components/comment/comments';
 import AllUser from './components/allpost/AllUser';
@@ -13,61 +12,59 @@ import GetUserProfile from './components/allpost/User';
 import AllPostBlogs from './components/allpost/AllBlogPosts.js';
 import GetOneUser from './components/Blog/Bloguser';
 import Navbar from './components/Navbar';
-
-
-
-// import Images from '../../images'
+// import SignIn from './components/Login/Login'
 // import EditProfileUi from './components/profile/Editprofile';
-
 import EditBlog from './components/Blog/Editblog';
 
 
-function App() {
+// With Template UI 
+import LogIn from './components/Login/TemplateLogin';
+import SignUp from './components/Signup/Sign';
+import BlogCreate from './components/Blog/CreateBlog';
+
+
+function App() {                                                  
   
 
   return (
-        // <div className="">
           <Router>
             <Navbar />
             <Switch>
-              {/* <Route exact path='/'> 
-              {
-                cookies.isAuthenticated ? <Homepage /> : <Login/>
-              }
-              </Route> */}
 
-              <Route exact path='/' component={Homepage}/>
-
+              {/* <Route exact path='/log'> <SignIn/></Route> */}
 
               {/* Login Route */}
-              <Route exact path='/login' component={Login} />
-              {/* <Route path='/login'> <Login /> </Route> */}
+              {/* <Route path='/SignIn'> <SignIn /> </Route> */}
+
+              {/* With Template UI  */}
+
+              <Route path='/sign'><SignUp/></Route>
+              <Route path='/login'><LogIn/></Route>
+              <ProtectedRoute exact path='/blog' component={BlogCreate} />
+              <Route exact path='/' component={AllPostBlogs}/>
+              <Route path='/profileimg'> <UploadProfile /></Route>
+
 
 
               {/* Signup Route */}
               {/* <Route path='/signup'> <Register /> </Route> */}
-              <Route exact path='/signup' component={Register} />
+              {/* <Route exact path='/signup' component={Register} /> */}
 
 
-              {/* <ProtectedRoute exact path='/blogs' component={UploadSingleImage} /> */}
+              {/* <ProtectedRoute exact path='/blogs' component={BlogCreate} /> */}
 
 
               {/* USER BLOG Route */}
-              <ProtectedRoute exact path='/blog' component={UploadSingleImage} />
+              {/* <ProtectedRoute exact path='/blog' component={BlogCreate} /> */}
               <ProtectedRoute exact path='/editContent' component={EditBlog} />
               <Route path='/userBlog'><GetOneUser/></Route>
 
 
-              {/* <ProtectedRoute exact path='/blogComments' component={AllPostBlogs} /> */}
-
-
-              {/* ALL POSTS  */}
-
-              <Route path='/blogComments'><AllPostBlogs/></Route>
-
+              {/* <ProtectedRoute exact path='/allPosts' component={AllPostBlogs} /> */}
 
 
               {/* <Route path='/blog'> <UploadSingleImage /></Route> */}
+
               {/* <Route path='/editContent' ><EditBlog/></Route> */}
 
 
@@ -79,9 +76,8 @@ function App() {
 
 
 
-              {/* <Route path='/userprofile'><GetUserProfile/> </Route>
-              <Route path='/profileimg'> <UploadProfile /></Route>
-              <Route path='/comments'> <Comment /></Route> */}
+              <Route path='/userprofile'><GetUserProfile/> </Route>
+              {/* <Route path='/comments'> <Comment /></Route> */}
 
 
               {/* <Route path='/allposts'> <BlogPosts /></Route> */}

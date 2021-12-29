@@ -11,12 +11,12 @@ const EditBlog = () => {
 
     const Id = new URLSearchParams(search).get('ID');
     // console.log(Id, 'mmmmmm');
-    
+
     const Send = event => {
         const formData = new FormData();
         formData.append("bio", bio);
         formData.append("file", picture)
-        
+
         // console.log(formData);
 
         const config = {
@@ -34,24 +34,26 @@ const EditBlog = () => {
             })
     }
 
+    
     return (
-        <div className="blog">
-            <h1>Edit Blog Post </h1>
-            <input type="text" id="blog" placeholder="Edit Your Post" onChange={event => {
-                const { value } = event.target
-                setBio(value)
-            }} />
-            <br/>
-            <input type="file" onChange={event => {
-                const picture = event.target.files[0]
-                setPicture(picture)
-            }}></input> 
-            <br/>
-            <button onClick={Send}>edit</button>       
+        <div className='centered'>
+            <div className="blog">
+                <h1>Edit Blog Post </h1>
+                <input type="text" id="blog" placeholder="Edit Your Post" onChange={event => {
+                    const { value } = event.target
+                    setBio(value)
+                }} />
+                <br />
+                <input type="file" onChange={event => {
+                    const picture = event.target.files[0]
+                    setPicture(picture)
+                }}></input>
+                <br />
+                <button onClick={Send}>edit</button>
+            </div>
         </div>
     )
 }
-
 
 
 export default EditBlog;
